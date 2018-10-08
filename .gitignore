@@ -1,0 +1,11 @@
+*.log
+*.xml
+*.iml
+build/**
+out/**
+.gradle
+.idea
+gradle/**
+gradlew
+gradlew.bat
+Chap*/**
