@@ -1,7 +1,5 @@
 package com.algorithms.ch2;
 
-import java.util.Arrays;
-
 // highArray.java
 // demonstrates array class with high-level interface
 // to run this program: C>java HighArrayApp

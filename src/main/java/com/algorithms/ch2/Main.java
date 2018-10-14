@@ -1,7 +1,5 @@
 package com.algorithms.ch2;
 
-import java.util.ArrayList;
-
 // orderedArray.java
 // demonstrates ordered array class
 // to run this program: C>java OrderedApp

@@ -111,7 +111,7 @@ public class CustomDeque<E> implements Deque<E> {
     public E removeFirst() {
         if (isEmpty())
             throwDequeEmpty();
-        E e = retriveElement(0);
+        E e = retrieveElement(0);
         shrink(1);
         cleanUp();
         return e;
@@ -121,7 +121,7 @@ public class CustomDeque<E> implements Deque<E> {
     public E removeLast() {
         if (isEmpty())
             throwDequeEmpty();
-        E e = retriveElement(--size);
+        E e = retrieveElement(--size);
         cleanUp();
         return e;
     }
@@ -140,10 +140,11 @@ public class CustomDeque<E> implements Deque<E> {
     public E getFirst() {
         if (isEmpty())
             throwDequeEmpty();
-        return retriveElement(0);
+        return retrieveElement(0);
     }
 
-    private E retriveElement(int index) {
+    @SuppressWarnings("unchecked")
+    private E retrieveElement(int index) {
         return (E) dData[index];
     }
 
@@ -151,21 +152,21 @@ public class CustomDeque<E> implements Deque<E> {
     public E getLast() {
         if (isEmpty())
             throwDequeEmpty();
-        return retriveElement(size-1);
+        return retrieveElement(size-1);
     }
 
     @Override
     public E peekFirst() {
         if(isEmpty())
             return null;
-        return retriveElement(0);
+        return retrieveElement(0);
     }
 
     @Override
     public E peekLast() {
         if(isEmpty())
             return null;
-        return retriveElement(size-1);
+        return retrieveElement(size-1);
     }
 
     @Override

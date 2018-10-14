@@ -4,13 +4,13 @@ package com.algorithms.ch4;
 // demonstrates stacks
 // to run this program: C>java StackApp
 ////////////////////////////////////////////////////////////////
-class StackX
+class StackX2
    {
    private int maxSize;        // size of stack array
    private long[] stackArray;
    private int top;            // top of stack
 //--------------------------------------------------------------
-   public StackX(int s)         // constructor
+   public StackX2(int s)         // constructor
       {
       maxSize = s;             // set array size
       stackArray = new long[maxSize];  // create array
@@ -48,7 +48,7 @@ class StackApp
    {
    public static void main(String[] args)
       {
-      StackX theStack = new StackX(10);  // make new stack
+      StackX2 theStack = new StackX2(10);  // make new stack
       theStack.push(20);               // push items onto stack
       theStack.push(40);
       theStack.push(60);

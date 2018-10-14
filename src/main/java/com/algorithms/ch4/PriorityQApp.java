@@ -1,3 +1,5 @@
+package com.algorithms.ch4;
+
 // priorityQ.java
 // demonstrates priority queue
 // to run this program: C>java PriorityQApp
