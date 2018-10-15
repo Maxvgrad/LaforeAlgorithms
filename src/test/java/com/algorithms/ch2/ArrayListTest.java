@@ -17,7 +17,24 @@ public class ArrayListTest {
 
     @Test
     void removeIfTest() {
-        strList.removeIf(e -> e.length()>4);
+//        strList.removeIf(e -> e.length()>4);
 //        strList.remove("tt");
+        byte[] b = new byte[3];
+        System.out.println(b.hashCode());
+        b[0]=4;
+        System.out.println(b.hashCode());
+        b[1]=2;
+        System.out.println(b.hashCode());
+        byte[] b2 = new byte[3];
+
+        System.out.println(b.equals(b2));
+        System.out.println(b.equals(b));
+
+        Byte[] byteB = new Byte[3];
+
+        System.out.println(byteB.equals(b2));
+        new Object().hashCode()
+        Arrays.hashCode(b)
+
     }
 }
