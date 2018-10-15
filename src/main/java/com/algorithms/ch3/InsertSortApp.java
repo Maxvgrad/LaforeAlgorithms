@@ -68,6 +68,33 @@ class ArrayIns
          }  // end for
       }  // end insertionSort()
 
+
+       /**
+        * Task 3.1
+        */
+       public void bubbleSort() {
+           int out, in, outLeft = 0;
+
+           for (out = nElems - 1; out > outLeft; out--) {   // outer loop (backward)
+               outLeft = nElems - out - 1;
+               for (in = outLeft; in < out; in++)        // inner loop (forward)
+                   if (a[in] > a[in + 1])       // out of order?
+                       swap(in, in + 1);
+               // swap them
+               for (in = out; in > outLeft; in--) {
+                   if (a[in] < a[in - 1]) {
+                       swap(in, in - 1);
+                   }
+               }
+           }
+       }  // end bubbleSort()
+
+       private void swap(int first, int second) {
+           long tmp = a[first];
+           a[first] = a[second];
+           a[second] = tmp;
+       }
+
        void insertionSortNoDubs() {
            int in, out;
            int numOfDubs=0;
@@ -87,6 +114,75 @@ class ArrayIns
            }  // end for
            System.arraycopy(a, numOfDubs, a, 0, (nElems=nElems-numOfDubs));
        }  // end insertionSort()
+
+       /**
+        * Task 3.2
+        */
+       public double median() {
+           insertionSort();
+           if (nElems % 2 == 0) {
+               int index = nElems / 2;
+               return (a[index] + a[index-1]) / 2.0;
+           }
+           return a[nElems / 2] * 1.0;
+       }
+       //--------------------------------------------------------------
+
+       /**
+        * Task 3.5
+        */
+       public void insertionSortWithOutput()
+       {
+           int in, out, copy=0, compare=0;
+
+           for(out=1; out<nElems; out++)     // out is dividing line
+           {
+               long temp = a[out];            // remove marked item
+               in = out;                      // start shifts at out
+               while(in>0 && a[in-1] >= temp) // until one is smaller,
+               {
+                   a[in] = a[in-1];// shift item to right
+                   --in;                       // go left one position
+                   copy++;
+                   compare++;
+               }
+               compare++;
+               a[in] = temp;                  // insert marked item
+           }  // end for
+           System.out.println("Compare: " + compare + " Copy: " + copy);
+       }  // end insertionSort()
+
+       public int size() {
+           return nElems;
+       }
+
+       /**
+        * Task 3.4
+        */
+       public void oddEvenSort() {
+           int counter = 0;
+           while (true) {
+               boolean isSorted = true;
+
+               for (int i = 0; i < nElems-2; i=i+2) {
+                   if (a[i] > a[i+1]) {
+                       swap(i, i+1);
+                       isSorted=false;
+                   }
+               }
+               for (int i = 1; i < nElems-2; i=i+2) {
+                   if (a[i] > a[i+1]) {
+                       swap(i, i+1);
+                       isSorted=false;
+                   }
+               }
+
+               if (isSorted) {
+                   break;
+               }
+           }
+           System.out.println("Number of cycles: " + counter);
+       }
 //--------------------------------------------------------------
    }  // end class ArrayIns
 ////////////////////////////////////////////////////////////////
@@ -121,7 +217,7 @@ class InsertSortApp
 
       arr.display();                // display items
 
-      arr.insertionSortNoDubs();
+          arr.oddEvenSort();
       arr.display();                // display them again
       }  // end main()
    }  // end class InsertSortApp
