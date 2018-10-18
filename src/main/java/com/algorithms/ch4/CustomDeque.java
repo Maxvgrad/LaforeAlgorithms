@@ -51,6 +51,9 @@ public class CustomDeque<E> implements Deque<E> {
         throw new IllegalStateException("Deque is empty.");
     }
 
+    /**
+     * @throws IllegalStateException
+     */
     @Override
     public void addFirst(E e) {
         if (!ensureSize())

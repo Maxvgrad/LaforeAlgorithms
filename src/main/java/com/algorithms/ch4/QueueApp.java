@@ -58,6 +58,9 @@ class Queue
       return nItems;
       }
 
+      /**
+       * Task 4.1
+       */
        @Override
        public String toString() {
             StringBuilder result = new StringBuilder();

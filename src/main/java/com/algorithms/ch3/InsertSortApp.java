@@ -164,13 +164,13 @@ class ArrayIns
            while (true) {
                boolean isSorted = true;
 
-               for (int i = 0; i < nElems-2; i=i+2) {
+               for (int i = 0; i < nElems-1; i=i+2) {
                    if (a[i] > a[i+1]) {
                        swap(i, i+1);
                        isSorted=false;
                    }
                }
-               for (int i = 1; i < nElems-2; i=i+2) {
+               for (int i = 1; i < nElems-1; i=i+2) {
                    if (a[i] > a[i+1]) {
                        swap(i, i+1);
                        isSorted=false;
@@ -180,6 +180,7 @@ class ArrayIns
                if (isSorted) {
                    break;
                }
+               counter++;
            }
            System.out.println("Number of cycles: " + counter);
        }
