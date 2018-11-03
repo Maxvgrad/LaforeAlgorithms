@@ -1,9 +1,13 @@
 package com.algorithms.ch5;
 
 import java.util.Collection;
+import java.util.ConcurrentModificationException;
 import java.util.Deque;
 import java.util.Iterator;
+import java.util.ListIterator;
+import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 /**
  * Task 5.2
@@ -14,7 +18,7 @@ public class LinkedDeque<E> implements Deque<E> {
     private DcLink<E> last;
 
     private int size;
-    private int modChanges;
+    private int modCount;
 
     public LinkedDeque() {
 
@@ -43,13 +47,11 @@ public class LinkedDeque<E> implements Deque<E> {
         if (first == null) {
             first = new DcLink<>(e);
             last = first;
-        } else {
-            DcLink<E> tmp = first;
-            first = new DcLink<>(e);
-            first.setNext(tmp);
-        }
+        } else
+            first = new DcLink<>(null, e, first);
+
         size++;
-        modChanges++;
+        modCount++;
         return true;
     }
 
@@ -59,32 +61,41 @@ public class LinkedDeque<E> implements Deque<E> {
         if (last == null) {
             last = new DcLink<>(e);
             first = last;
-        } else {
-            DcLink<E> tmp = last;
-            last = new DcLink<>(e);
-            last.setPrevious(tmp);
-        }
+        } else
+            last = new DcLink<>(last, e, null);
+
         size++;
-        modChanges++;
+        modCount++;
         return true;
     }
 
     @Override
     public E removeFirst() {
-
-        return null;
+        E e;
+        if ((e = pollFirst()) == null)
+            throw new NoSuchElementException();
+        return e;
     }
 
     @Override
     public E removeLast() {
-        return null;
+        E e;
+        if ((e = pollLast()) == null)
+            throw new NoSuchElementException();
+        return e;
     }
 
     @Override
     public E pollFirst() {
-        E e = remove(first);
+        if (first == null)
+            return null;
+        DcLink<E> tmp = first;
+        first = tmp.getNext();
         checkInvariant();
-        return e;
+
+        size--;
+        modCount++;
+        return tmp.getData();
     }
 
     /**
@@ -99,102 +110,139 @@ public class LinkedDeque<E> implements Deque<E> {
 
     @Override
     public E pollLast() {
-        E e = remove(last);
-        checkInvariant();
-        return e;
-    }
-
-    private E remove(DcLink<E> e) {
-        if (e == null)
+        if (last == null)
             return null;
 
-        DcLink<E> tmp = e;
-        e = tmp.getNext();
+        DcLink<E> tmp = last;
+        last = tmp.getNext();
+        checkInvariant();
+        size--;
+        modCount--;
         return tmp.getData();
     }
 
     @Override
     public E getFirst() {
-        return null;
+        if (first == null)
+            throw new NoSuchElementException();
+        return first.getData();
     }
 
     @Override
     public E getLast() {
-        return null;
+        if (last == null)
+            throw new NoSuchElementException();
+        return last.getData();
     }
 
     @Override
     public E peekFirst() {
-        return null;
+        return first != null ? first.getData() : null;
     }
 
     @Override
     public E peekLast() {
-        return null;
+        return last != null ? last.getData() : null;
     }
 
     @Override
     public boolean removeFirstOccurrence(Object o) {
-        return false;
+        return remove(iterator(), o);
     }
 
     @Override
     public boolean removeLastOccurrence(Object o) {
+        return remove(descendingIterator(), o);
+    }
+
+    private boolean remove(Iterator<E> iter, Object o) {
+        Objects.requireNonNull(o);
+        while (iter.hasNext()) {
+            if (Objects.equals(iter.next(), o)) {
+                iter.remove();
+                return true;
+            }
+        }
         return false;
     }
 
     @Override
     public boolean add(E e) {
-        return false;
+        addLast(e);
+        return true;
     }
 
     @Override
     public boolean offer(E e) {
-        return false;
+        return offerLast(e);
     }
 
     @Override
     public E remove() {
-        return null;
+        E e;
+        if ((e = pollFirst()) == null)
+            throw new NoSuchElementException();
+        return e;
     }
 
     @Override
     public E poll() {
-        return null;
+        return pollFirst();
     }
 
     @Override
     public E element() {
-        return null;
+        E e;
+        if ((e = peekFirst()) == null)
+            throw new NoSuchElementException();
+        return e;
     }
 
     @Override
     public E peek() {
-        return null;
+        return peekFirst();
     }
 
     @Override
     public boolean addAll(Collection<? extends E> c) {
-        return false;
+        Objects.requireNonNull(c);
+        boolean modified = false;
+        Iterator<? extends E> iter = c.iterator();
+        while (iter.hasNext()) {
+            offerLast(iter.next());
+            modified = true;
+        }
+        return modified;
     }
+
+    //Stack methods
 
     @Override
     public void push(E e) {
-
+        addFirst(e);
     }
 
     @Override
     public E pop() {
-        return null;
+        return pollFirst();
     }
+
+    // Collection methods
 
     @Override
     public boolean remove(Object o) {
-        return false;
+        return removeFirstOccurrence(o);
     }
 
     @Override
     public boolean contains(Object o) {
+        Objects.requireNonNull(o);
+        Iterator<E> iter = iterator();
+        while (iter.hasNext()) {
+            if (Objects.equals(iter.next(), o)) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -203,15 +251,130 @@ public class LinkedDeque<E> implements Deque<E> {
         return size;
     }
 
+    private E unlink(DcLink<E> link) {
+        final E data = link.getData();
+
+        final DcLink<E> prev = link.getPrevious();
+        final DcLink<E> next = link.getNext();
+
+        if (prev == null) {
+            first = next;
+        } else {
+            prev.setNext(next);
+            link.setPrevious(null);
+        }
+
+        if (next == null) {
+            last = prev;
+        } else {
+            next.setPrevious(prev);
+            link.setNext(null);
+        }
+        link.setData(null);
+        size--;
+        modCount++;
+        return data;
+    }
+
     @Override
     public Iterator<E> iterator() {
-        return null;
+        return new Iter(first);
+    }
+
+    private class Iter implements ListIterator<E> {
+        DcLink<E> prev;
+        DcLink<E> next;
+
+        private int expectedModCount;
+
+        public Iter(DcLink<E> l) {
+            next = l;
+            this.expectedModCount = modCount;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return next != null;
+        }
+
+        @Override
+        public E next() {
+            checkConcurMod();
+            if (!hasNext())
+                throw new NoSuchElementException();
+            prev = next;
+            next = next.getNext();
+            return prev.getData();
+        }
+
+        @Override
+        public boolean hasPrevious() {
+            return prev != null;
+        }
+
+        @Override
+        public E previous() {
+            checkConcurMod();
+            if (!hasPrevious())
+                throw new NoSuchElementException();
+            next = prev;
+            prev = prev.getPrevious();
+            return next.getData();
+        }
+
+        @Override
+        public int nextIndex() {
+            return 0;
+        }
+
+        @Override
+        public int previousIndex() {
+            return 0;
+        }
+
+        @Override
+        public void set(E e) {
+
+        }
+
+        @Override
+        public void add(E e) {
+
+        }
+
+        @Override
+        public void remove() {
+            checkConcurMod();
+            if (prev == null)
+                throw new NoSuchElementException();
+
+            unlink(prev);
+
+            prev = null;
+            expectedModCount = modCount;
+        }
+
+        @Override
+        public void forEachRemaining(Consumer<? super E> action) {
+            Objects.requireNonNull(action);
+            while (hasNext()) {
+                checkConcurMod();
+                action.accept(next());
+            }
+        }
+
+        private void checkConcurMod() {
+            if (expectedModCount != modCount)
+                throw new ConcurrentModificationException();
+        }
     }
 
     @Override
     public Iterator<E> descendingIterator() {
         return null;
     }
+
+
 
     @Override
     public boolean isEmpty() {
@@ -220,7 +383,14 @@ public class LinkedDeque<E> implements Deque<E> {
 
     @Override
     public Object[] toArray() {
-        return new Object[0];
+        final int size = size();
+        Object[] resultArr = new Object[size];
+        Iterator iter = iterator();
+        for (int i = 0; iter.hasNext() && resultArr.length <= size; i++) {
+            resultArr[i] = iter.next();
+        }
+
+        return resultArr;
     }
 
     @Override
@@ -245,6 +415,8 @@ public class LinkedDeque<E> implements Deque<E> {
 
     @Override
     public void clear() {
-
+        Iterator iter = iterator();
+        while (iter.hasNext())
+            iter.remove();
     }
 }

@@ -8,12 +8,13 @@ public class DcLink<E> {
     private E data;
 
     public DcLink(E data) {
-        this.data = data;
+        this(null, data, null);
     }
 
-    public DcLink(DcLink<E> previous, DcLink<E> next) {
+    public DcLink(DcLink<E> previous, E e, DcLink<E> next) {
         this.next = next;
         this.previous = previous;
+        this.data = e;
     }
 
     public DcLink<E> getNext() {
