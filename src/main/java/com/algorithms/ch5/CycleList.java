@@ -67,7 +67,6 @@ public class CycleList<E> {
         }
 
         return size;
-
     }
 
 
