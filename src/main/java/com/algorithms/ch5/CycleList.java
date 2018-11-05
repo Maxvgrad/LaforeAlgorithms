@@ -57,7 +57,6 @@ public class CycleList<E> {
     }
 
     public int size() {
-        System.out.println("#size");
         int size = 1;
         CycleList<E> cell = next;
 

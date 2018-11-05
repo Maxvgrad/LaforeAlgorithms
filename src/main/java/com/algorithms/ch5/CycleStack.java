@@ -2,6 +2,10 @@ package com.algorithms.ch5;
 
 import java.util.Objects;
 
+
+/**
+ * Task 5.4
+ */
 public class CycleStack<E> {
     private CycleList<E> data;
     private int size;
