@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
- * Task 4.5
+ * Task 4.5 //todo Not finished
  */
 public class GroceryShop {
     private volatile AtomicInteger items;
