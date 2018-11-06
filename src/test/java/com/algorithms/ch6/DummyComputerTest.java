@@ -13,4 +13,9 @@ class DummyComputerTest {
         assertEquals(6, dummyComputer.mult(3, 2));
         assertEquals(10, dummyComputer.mult(2, 5));
     }
+
+    @Test
+    void powTest() {
+        assertEquals(32, dummyComputer.pow(2, 5));
+    }
 }
